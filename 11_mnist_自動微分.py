@@ -1,0 +1,52 @@
+# 手寫阿拉伯數字辨識
+# 載入套件
+import tensorflow as tf
+# 載入手寫阿拉伯數字訓練資料(MNIST)
+mnist = tf.keras.datasets.mnist
+(x_train, y_train),(x_test, y_test) = mnist.load_data()
+y_train = tf.one_hot(y_train, depth=10)
+y_test = tf.one_hot(y_test, depth=10)
+
+# 特徵縮放
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+# 建立模型
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Input((28, 28)),
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(128, activation='relu'),
+  tf.keras.layers.Dropout(0.2),
+  tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# 設定優化器(optimizer)、損失函數(loss)
+optimizer = tf.keras.optimizers.Adam()
+loss_fn = tf.keras.losses.CategoricalCrossentropy() #from_logits=True)
+
+# 訓練模型
+epochs = 5
+batch_size = 1000
+for epoch in range(epochs):
+    for batch in range(x_train.shape[0] // batch_size):
+        x_batch = x_train[batch * batch_size : (batch + 1) * batch_size]
+        y_batch = y_train[batch * batch_size : (batch + 1) * batch_size]
+
+        # 定義損失函數
+        with tf.GradientTape() as tape:
+            # 正向傳導(Forward pass)
+            pred = model(x_batch) # y = wX + b
+            # 計算損失
+            loss = loss_fn(y_batch, pred)
+
+        # 計算梯度(gradients)
+        gradients = tape.gradient(loss, model.trainable_variables)
+
+        # 更新權重(weights)
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+    print(f"Epoch {epoch+1}, Loss: {loss.numpy()}")
+
+# 模型評分
+model.compile(optimizer=optimizer, loss=loss_fn, metrics=['accuracy'])
+loss, accuracy = model.evaluate(x_test, y_test, verbose=False)
+print(f'loss={loss}, accuracy={accuracy}')    
