@@ -1,3 +1,6 @@
+# 深度學習最佳入門與專題實戰導讀
+- 深度學習最佳入門與專題實戰導讀 v2.pdf
+
 # 梯度下降法系列文章之範例
 - [徹底理解神經網路的核心 -- 梯度下降法 (1)](https://ithelp.ithome.com.tw/articles/10370411)
 - [徹底理解神經網路的核心 -- 梯度下降法 (2)](https://ithelp.ithome.com.tw/articles/10370433)
